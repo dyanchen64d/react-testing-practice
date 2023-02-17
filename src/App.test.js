@@ -63,3 +63,68 @@ test('should show email error message on invalid email', async () => {
     expect(emailErrorElementAgain).toBeInTheDocument();
   });
 });
+
+test('should show password error if password is less than 5 characters', async () => {
+  render(<App />);
+
+  const emailInputElement = screen.getByLabelText('Email address');
+
+  const passwordInputElement = screen.getByLabelText('Password');
+
+  const passwordErrorElement = screen.queryByText(
+    /the password you entered should contain 5 or more characters/i
+  );
+
+  const submitButtonElement = screen.getByTestId('button');
+
+  userEvent.type(emailInputElement, 'zhang@gmail.com');
+
+  await waitFor(() => {
+    expect(passwordErrorElement).not.toBeInTheDocument();
+  });
+
+  userEvent.type(passwordInputElement, '123');
+
+  userEvent.click(submitButtonElement);
+
+  await waitFor(() => {
+    const passwordErrorElementAgain = screen.queryByText(
+      /the password you entered should contain 5 or more characters/i
+    );
+    expect(passwordErrorElementAgain).toBeInTheDocument();
+  });
+});
+
+test('should show confirm password error if password not match', async () => {
+  render(<App />);
+
+  const emailInputElement = screen.getByLabelText('Email address');
+
+  const passwordInputElement = screen.getByLabelText('Password');
+
+  const confirmPasswordInputElement = screen.getByLabelText('Confirm Password');
+
+  const confirmPasswordErrorElement = screen.queryByText(
+    /the passwords not match. try again/i
+  );
+
+  const submitButtonElement = screen.getByTestId('button');
+
+  userEvent.type(emailInputElement, 'zhang@gmail.com');
+  userEvent.type(passwordInputElement, '12345');
+
+  await waitFor(() => {
+    expect(confirmPasswordErrorElement).not.toBeInTheDocument();
+  });
+
+  userEvent.type(confirmPasswordInputElement, '123456');
+
+  userEvent.click(submitButtonElement);
+
+  await waitFor(() => {
+    const confirmPasswordErrorElement = screen.queryByText(
+      /the passwords not match. try again/i
+    );
+    expect(confirmPasswordErrorElement).toBeInTheDocument();
+  });
+});

@@ -18,10 +18,17 @@ function App() {
   const handleClick = (e) => {
     e.preventDefault();
     if (!validator.isEmail(signupInput.email)) {
-      setError('the email you input is invalid');
-    } else {
-      setError('');
+      return setError('the email you input is invalid');
     }
+    if (signupInput.password.length < 5) {
+      return setError(
+        'the password you entered should contain 5 or more characters'
+      );
+    }
+    if (signupInput.password !== signupInput.confirmPassword) {
+      return setError('the passwords not match. try again');
+    }
+    setError('');
   };
 
   return (
